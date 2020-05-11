@@ -2,7 +2,7 @@
 In realtime compiling of dotnet v35/v40 exe/dll binaries + obfuscation with ConfuserEx on your linux cobalt strike server.
 ![beaconmenu](Images/beaconmenu.PNG)
 
-When you specify a .cs file to compile and execute on a beacon, the compiler will automaticly search for all .cs dependencies in that source directory and sub directories and compile against them so there is no need for merging everything into 1 .cs file. By default, all the .dll files under `Compiler/References/net*/` will be loaded as a References to each compiled project. If you want better opsec and  load just the necessary .dll files as References you can do that by dropping a file called `Refs` in the source directory of the project you are compiling and it will import just those .dll names instead of everything.
+When you specify a .cs file to compile and execute on a beacon, the compiler will automaticly search for all .cs dependencies in that source directory and sub directories and compile against them so there is no need for merging everything into 1 .cs file, remember this so you dont put multiple project in the same directory because it will create conflicts. By default, all the .dll files under `Compiler/References/net*/` will be loaded as a References to each compiled project. If you want better opsec and  load just the necessary .dll files as References you can do that by dropping a file called `Refs` in the source directory of the project you are compiling and it will import just those .dll names instead of everything.
 Refs Example
 ```
 root@kali:/# cat Rubeus-master/Rubeus/Refs 
@@ -32,7 +32,7 @@ Build succeeded.
 Time Elapsed 00:00:01.48
 [*]Compiling..
 Source Dir    :  ../Rubeus-master/Rubeus
-Source File   :  ../Rubeus-master/Rubeus/test.cs
+Source File   :  ../Rubeus-master/Rubeus/Program.cs
 Output Kind   :  ConsoleApplication
 .Net Version  :  Net40
 Platform      :  AnyCpu
