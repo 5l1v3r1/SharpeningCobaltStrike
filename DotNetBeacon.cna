@@ -40,7 +40,7 @@ sub compile {
 	# Increase sleep if your binary fails to compile from CS
 	sleep(2000);
 	$size = -1;
-	$timeout = 15;
+	$timeout = 100;
 	while ((!-exists $outfile || $size < 0 || $size < $newsize) && $timeout > 0) {
 		$size = $newsize;
 		$newsize = lof($outfile);
