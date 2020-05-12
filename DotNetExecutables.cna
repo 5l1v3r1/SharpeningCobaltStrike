@@ -18,7 +18,7 @@ sub compile {
 	sleep(2000);
 	$size = -1;
 	# 15Sec waiting time
-	$timeout = 15;
+	$timeout = 100;
 	while ((!-exists $outfile || $size < 0 || $size < $newsize) && $timeout > 0) {
 		$size = $newsize;
 		$newsize = lof($outfile);
