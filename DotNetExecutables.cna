@@ -17,7 +17,6 @@ sub compile {
 	# Increase sleep if your binary fails to compile from CS
 	sleep(2000);
 	$size = -1;
-	# 15Sec waiting time
 	$timeout = 100;
 	while ((!-exists $outfile || $size < 0 || $size < $newsize) && $timeout > 0) {
 		$size = $newsize;
@@ -37,7 +36,7 @@ sub compile {
 sub apc_executable {
 	# Set variables
 	global('$version $outputformat $file');
-	local('%options $listener $rawshellcode $b64shellcode $apc $newapc $handle $apcoutfile $file');
+	local('%options $listener $rawshellcode $b64shellcode $apc $newapc $handle $apcoutfile');
 	%options = $3;		
 	$version = iff(%options["dotnet35"] eq "true", "net35", "net40");
 	$listener = %options["listener"];
@@ -61,7 +60,7 @@ sub apc_executable {
     
 	# Prompt for save location and compile
 	prompt_file_save($null, {
-		loca('$outfile');
+		local('$outfile');
 		$outfile = compile($file, $outputformat, $version, $1 );
 		if($outfile eq "")
 		{
