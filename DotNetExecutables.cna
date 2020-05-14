@@ -86,7 +86,7 @@ popup attacks {
 			local('$dialog %defaults');
 			# Create our dialog
 			$dialog = dialog("APC Shellcode loader (Stageless)", %defaults, &apc_executable);
-			dialog_description($dialog, "An APC loader that injects a cobalt strike beacon into explorer/winlogon");
+			dialog_description($dialog, "An APC process injector that loads cobalt strike beacon into new notepad process");
 			drow_listener_stage($dialog, "listener", "Listener: ");
 			drow_combobox($dialog, "output", "Output: ", @("exe"));
 			drow_checkbox($dialog, "dotnet35", "dotnet35: ", "Compile for dotnet35 instead of dotnet40");
