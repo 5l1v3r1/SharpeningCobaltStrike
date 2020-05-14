@@ -35,8 +35,8 @@ sub compile {
 
 sub apc_executable {
 	# Set variables
-	global('$version $outputformat $file');
-	local('%options $listener $rawshellcode $b64shellcode $apc $newapc $handle $apcoutfile');
+	global('$version $outputformat $file $apc');
+	local('%options $listener $rawshellcode $b64shellcode $newapc $handle $apcoutfile');
 	%options = $3;		
 	$version = iff(%options["dotnet35"] eq "true", "net35", "net40");
 	$listener = %options["listener"];
@@ -69,11 +69,13 @@ sub apc_executable {
 		else{
 			show_message("Compiling successful");
 		}
+		# Restore Template file
+		# sleep 1 sec
+		sleep(1000);
+		$handle = openf(">$file");
+		writeb($handle, $apc);
+		closef($handle);
 	});
-	# Restore Template file
-	$handle = openf(">$file");
-	writeb($handle, $apc);
-	closef($handle);
 }
 
 

